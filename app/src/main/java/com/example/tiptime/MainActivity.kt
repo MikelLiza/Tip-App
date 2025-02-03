@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -69,13 +70,14 @@ class MainActivity : ComponentActivity() {
 fun EditNumberField(
     value: String,
     onValueChange: (String) -> Unit,
+    label: String,
     modifier: Modifier = Modifier
 ) {
 
     TextField(
         value = value,
         onValueChange = onValueChange,
-        label = { Text(stringResource(R.string.bill_amount))},
+        label = { Text(label)},
         singleLine = true,
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         modifier = modifier
@@ -86,8 +88,10 @@ fun EditNumberField(
 @Composable
 fun TipTimeLayout() {
     var amountInput by remember { mutableStateOf("0") }
+    var tipInput by remember { mutableStateOf("0") }
     val amount = amountInput.toDoubleOrNull() ?: 0.0
-    val tip = calculateTip(amount)
+    val tipPercent = tipInput.toDoubleOrNull() ?: 0.0
+    val tip = calculateTip(amount, tipPercent)
 
     Column(
         modifier = Modifier
@@ -106,8 +110,17 @@ fun TipTimeLayout() {
         EditNumberField(
             value = amountInput,
             onValueChange = { amountInput = it },
+            label = stringResource(R.string.bill_amount),
             modifier = Modifier
                 .padding(bottom = 32.dp)
+                .fillMaxWidth()
+        )
+        EditNumberField(
+            value = tipInput,
+            onValueChange = { tipInput = it },
+            label = stringResource(R.string.tip_percentage),
+            modifier = Modifier
+                .padding(bottom = 16.dp)
                 .fillMaxWidth()
         )
         Text(
